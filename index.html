@@ -171,7 +171,58 @@ textarea.input-field{resize:vertical;min-height:80px}
 </div>
 <script>
 let data={tasks:[],meals:[],studies:[],courses:[],money:[],theme:{purple:'#af52de',cyan:'#5ac8fa'}};
-function init(){const s=localStorage.getItem('workbenchData');if(s){data=JSON.parse(s);if(data.theme)applyThemeColors()}renderAll()}
+function init(){
+  const s=localStorage.getItem('workbenchData');
+  if(s){
+    data=JSON.parse(s);
+    if(data.theme)applyThemeColors();
+  }else{
+    // 首次打开，添加示例数据
+    addSampleData();
+  }
+  renderAll();
+}
+function addSampleData(){
+  const today=new Date().toDateString();
+  const thisMonth=new Date().toISOString().slice(0,7);
+  
+  // 示例任务
+  data.tasks=[
+    {id:1,text:'完成项目文档编写',completed:true,date:today},
+    {id:2,text:'学习Vue3新特性',completed:false,date:today},
+    {id:3,text:'健身30分钟',completed:false,date:today},
+    {id:4,text:'阅读技术博客',completed:false,date:today}
+  ];
+  
+  // 示例饮食记录
+  data.meals=[
+    {id:1,type:'breakfast',content:'燕麦粥、鸡蛋、牛奶',calories:380,date:today,typeName:'早餐'},
+    {id:2,type:'lunch',content:'米饭、红烧肉、青菜',calories:650,date:today,typeName:'午餐'}
+  ];
+  
+  // 示例学习记录
+  data.studies=[
+    {id:1,topic:'软件工程基础',duration:2,note:'学习了软件开发模型和生命周期',date:today},
+    {id:2,topic:'数据库设计',duration:1.5,note:'ER图设计和范式理论',date:today}
+  ];
+  
+  // 示例AI课程
+  data.courses=[
+    {id:1,name:'机器学习基础',progress:45,note:'吴恩达课程，正在学习监督学习'},
+    {id:2,name:'Python数据分析',progress:70,note:'Pandas和NumPy实战'},
+    {id:3,name:'深度学习入门',progress:20,note:'神经网络基础'}
+  ];
+  
+  // 示例记账记录
+  data.money=[
+    {id:1,type:'income',category:'salary',amount:15000,note:'本月工资',date:thisMonth,categoryName:'工资'},
+    {id:2,type:'expense',category:'food',amount:35,note:'午餐',date:thisMonth,categoryName:'餐饮'},
+    {id:3,type:'expense',category:'transport',amount:15,note:'地铁',date:thisMonth,categoryName:'交通'},
+    {id:4,type:'expense',category:'shopping',amount:299,note:'购买书籍',date:thisMonth,categoryName:'购物'}
+  ];
+  
+  saveData();
+}
 function saveData(){localStorage.setItem('workbenchData',JSON.stringify(data))}
 function switchPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');document.querySelector('[data-page="'+id+'"]').classList.add('active');if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('show')}
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('show')}
