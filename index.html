@@ -186,18 +186,23 @@ function addSampleData(){
   const today=new Date().toDateString();
   const thisMonth=new Date().toISOString().slice(0,7);
   
-  // 示例任务
+  // 示例任务（更多数据）
   data.tasks=[
     {id:1,text:'完成项目文档编写',completed:true,date:today},
-    {id:2,text:'学习Vue3新特性',completed:false,date:today},
+    {id:2,text:'学习Vue3新特性',completed:true,date:today},
     {id:3,text:'健身30分钟',completed:false,date:today},
-    {id:4,text:'阅读技术博客',completed:false,date:today}
+    {id:4,text:'阅读技术博客',completed:false,date:today},
+    {id:5,text:'整理工作邮件',completed:true,date:today},
+    {id:6,text:'准备周报材料',completed:false,date:today},
+    {id:7,text:'学习英语30分钟',completed:false,date:today},
+    {id:8,text:'冥想15分钟',completed:true,date:today}
   ];
   
   // 示例饮食记录
   data.meals=[
     {id:1,type:'breakfast',content:'燕麦粥、鸡蛋、牛奶',calories:380,date:today,typeName:'早餐'},
-    {id:2,type:'lunch',content:'米饭、红烧肉、青菜',calories:650,date:today,typeName:'午餐'}
+    {id:2,type:'lunch',content:'米饭、红烧肉、青菜',calories:650,date:today,typeName:'午餐'},
+    {id:3,type:'snack',content:'苹果、坚果',calories:150,date:today,typeName:'加餐'}
   ];
   
   // 示例学习记录
@@ -213,12 +218,20 @@ function addSampleData(){
     {id:3,name:'深度学习入门',progress:20,note:'神经网络基础'}
   ];
   
-  // 示例记账记录
+  // 示例记账记录（更多数据）
   data.money=[
     {id:1,type:'income',category:'salary',amount:15000,note:'本月工资',date:thisMonth,categoryName:'工资'},
-    {id:2,type:'expense',category:'food',amount:35,note:'午餐',date:thisMonth,categoryName:'餐饮'},
-    {id:3,type:'expense',category:'transport',amount:15,note:'地铁',date:thisMonth,categoryName:'交通'},
-    {id:4,type:'expense',category:'shopping',amount:299,note:'购买书籍',date:thisMonth,categoryName:'购物'}
+    {id:2,type:'income',category:'other',amount:500,note:'项目奖金',date:thisMonth,categoryName:'其他'},
+    {id:3,type:'expense',category:'food',amount:35,note:'午餐',date:thisMonth,categoryName:'餐饮'},
+    {id:4,type:'expense',category:'food',amount:28,note:'早餐',date:thisMonth,categoryName:'餐饮'},
+    {id:5,type:'expense',category:'food',amount:45,note:'晚餐',date:thisMonth,categoryName:'餐饮'},
+    {id:6,type:'expense',category:'transport',amount:15,note:'地铁',date:thisMonth,categoryName:'交通'},
+    {id:7,type:'expense',category:'transport',amount:120,note:'打车',date:thisMonth,categoryName:'交通'},
+    {id:8,type:'expense',category:'shopping',amount:299,note:'购买书籍',date:thisMonth,categoryName:'购物'},
+    {id:9,type:'expense',category:'shopping',amount:89,note:'日用品',date:thisMonth,categoryName:'购物'},
+    {id:10,type:'expense',category:'entertainment',amount:68,note:'电影票',date:thisMonth,categoryName:'娱乐'},
+    {id:11,type:'expense',category:'entertainment',amount:200,note:'游戏充值',date:thisMonth,categoryName:'娱乐'},
+    {id:12,type:'expense',category:'food',amount:156,note:'聚餐',date:thisMonth,categoryName:'餐饮'}
   ];
   
   saveData();
