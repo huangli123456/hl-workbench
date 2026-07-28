@@ -1,0 +1,20 @@
+{
+  "name": "hl的AI个人工作台",
+  "short_name": "工作台",
+  "description": "个人效率工具 - 计划、学习、记账一体化",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f5f7",
+  "theme_color": "#af52de",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "lang": "zh-CN"
+}

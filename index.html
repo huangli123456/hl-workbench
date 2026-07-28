@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<meta name="theme-color" content="#af52de">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="工作台">
+<meta name="description" content="个人效率工具 - 计划、学习、记账一体化">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<title>hl的AI个人工作台</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--p:#af52de;--c:#5ac8fa;--bg:#f5f5f7;--card:#fff;--txt:#1d1d1f;--txt2:#86868b;--bd:#d2d2d7;--sh:0 4px 12px rgba(0,0,0,0.08);--r:16px;--r2:12px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;display:flex}
+.sidebar{width:240px;background:var(--card);border-right:1px solid var(--bd);padding:24px 16px;display:flex;flex-direction:column;position:fixed;height:100vh;z-index:100;transition:transform 0.3s}
+.logo{width:40px;height:40px;background:linear-gradient(135deg,var(--p),var(--c));border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;font-size:18px}
+.sidebar-header{display:flex;align-items:center;gap:12px;padding:0 8px;margin-bottom:32px}
+.sidebar-title{font-size:18px;font-weight:600}
+.nav-menu{flex:1;display:flex;flex-direction:column;gap:4px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--r2);cursor:pointer;transition:all 0.2s;color:var(--txt2);font-size:15px}
+.nav-item:hover{background:var(--bg)}
+.nav-item.active{background:linear-gradient(135deg,rgba(175,82,222,0.1),rgba(90,200,250,0.1));color:var(--p);font-weight:500}
+.sidebar-footer{padding-top:16px;border-top:1px solid var(--bd);margin-top:16px}
+.sidebar-btn{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--r2);cursor:pointer;transition:all 0.2s;color:var(--txt2);font-size:14px;width:100%;border:none;background:none;text-align:left}
+.sidebar-btn:hover{background:var(--bg)}
+.main-content{flex:1;margin-left:240px;padding:32px;min-height:100vh}
+.page-header{margin-bottom:24px}
+.page-title{font-size:28px;font-weight:600;margin-bottom:8px}
+.page-subtitle{color:var(--txt2);font-size:15px}
+.card{background:var(--card);border-radius:var(--r);padding:24px;box-shadow:var(--sh);margin-bottom:20px}
+.card-title{font-size:18px;font-weight:600;margin-bottom:16px}
+.input-group{margin-bottom:16px}
+.input-label{display:block;font-size:14px;color:var(--txt2);margin-bottom:8px}
+.input-field{width:100%;padding:12px 16px;border:1px solid var(--bd);border-radius:var(--r2);font-size:15px;transition:all 0.2s;background:var(--bg)}
+.input-field:focus{outline:none;border-color:var(--p);background:#fff}
+textarea.input-field{resize:vertical;min-height:80px}
+.btn{padding:12px 24px;border:none;border-radius:var(--r2);font-size:15px;font-weight:500;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:linear-gradient(135deg,var(--p),var(--c));color:#fff}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(175,82,222,0.3)}
+.btn-secondary{background:var(--bg);color:var(--txt)}
+.btn-secondary:hover{background:var(--bd)}
+.list-item{display:flex;align-items:center;justify-content:space-between;padding:16px;background:var(--bg);border-radius:var(--r2);margin-bottom:12px;transition:all 0.2s}
+.list-item:hover{transform:translateX(4px)}
+.list-item-content{flex:1}
+.list-item-title{font-weight:500;margin-bottom:4px}
+.list-item-meta{font-size:13px;color:var(--txt2)}
+.icon-btn{width:32px;height:32px;border:none;background:#fff;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.icon-btn:hover{background:var(--p);color:#fff}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:var(--card);border-radius:var(--r);padding:20px;box-shadow:var(--sh)}
+.stat-value{font-size:32px;font-weight:600;background:linear-gradient(135deg,var(--p),var(--c));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-label{font-size:14px;color:var(--txt2);margin-top:4px}
+.ai-float{position:fixed;bottom:32px;right:32px;z-index:1000}
+.ai-btn{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--c));border:none;color:#fff;font-size:24px;cursor:pointer;box-shadow:0 8px 24px rgba(175,82,222,0.4);transition:all 0.3s;display:flex;align-items:center;justify-content:center}
+.ai-btn:hover{transform:scale(1.1)}
+.ai-panel{position:absolute;bottom:80px;right:0;width:380px;background:var(--card);border-radius:var(--r);box-shadow:0 12px 40px rgba(0,0,0,0.15);display:none;overflow:hidden}
+.ai-panel.show{display:block;animation:slideUp 0.3s}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.ai-header{padding:16px 20px;background:linear-gradient(135deg,var(--p),var(--c));color:#fff;font-weight:600}
+.ai-body{padding:20px}
+.ai-input{width:100%;padding:12px 16px;border:1px solid var(--bd);border-radius:var(--r2);font-size:14px;margin-bottom:12px}
+.ai-input:focus{outline:none;border-color:var(--p)}
+.ai-response{background:var(--bg);padding:16px;border-radius:var(--r2);font-size:14px;line-height:1.6;margin-top:12px;max-height:200px;overflow-y:auto}
+.color-picker-group{display:flex;gap:12px;align-items:center;margin-bottom:16px}
+.color-preview{width:60px;height:40px;border-radius:8px;border:2px solid var(--bd)}
+.mobile-menu-btn{display:none;position:fixed;top:16px;left:16px;z-index:200;width:44px;height:44px;background:var(--card);border:none;border-radius:12px;font-size:20px;cursor:pointer;box-shadow:var(--sh)}
+@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.show{transform:translateX(0)}.main-content{margin-left:0;padding:80px 16px 100px}.mobile-menu-btn{display:flex;align-items:center;justify-content:center}.ai-panel{width:calc(100vw - 32px);right:-8px}.stats-grid{grid-template-columns:1fr}}
+.page{display:none}.page.active{display:block}
+.checkbox-wrapper{display:flex;align-items:center;gap:12px;cursor:pointer}
+.checkbox{width:24px;height:24px;border:2px solid var(--bd);border-radius:6px;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.checkbox.checked{background:linear-gradient(135deg,var(--p),var(--c));border-color:transparent;color:#fff}
+.checkbox-text{flex:1}
+.checkbox-text.completed{text-decoration:line-through;color:var(--txt2)}
+.amount{font-size:24px;font-weight:600}
+.amount.income{color:#34c759}
+.amount.expense{color:#ff3b30}
+.progress-bar{height:8px;background:var(--bg);border-radius:4px;overflow:hidden;margin:12px 0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--p),var(--c));border-radius:4px;transition:width 0.3s}
+</style>
+</head>
+<body>
+<button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+<div class="sidebar" id="sidebar">
+<div class="sidebar-header"><div class="logo">AI</div><div class="sidebar-title">hl的工作台</div></div>
+<nav class="nav-menu">
+<div class="nav-item active" data-page="daily-plan" onclick="switchPage('daily-plan')"><span>📋</span><span>每日计划</span></div>
+<div class="nav-item" data-page="diet-record" onclick="switchPage('diet-record')"><span>🍎</span><span>饮食记录</span></div>
+<div class="nav-item" data-page="system-analyst" onclick="switchPage('system-analyst')"><span>📖</span><span>系统分析师备考</span></div>
+<div class="nav-item" data-page="ai-course" onclick="switchPage('ai-course')"><span>🤖</span><span>AI课程学习</span></div>
+<div class="nav-item" data-page="money-manager" onclick="switchPage('money-manager')"><span>💰</span><span>记账存钱</span></div>
+<div class="nav-item" data-page="theme-settings" onclick="switchPage('theme-settings')"><span>🎨</span><span>配色调整</span></div>
+</nav>
+<div class="sidebar-footer">
+<button class="sidebar-btn" onclick="exportData()"><span>📤</span><span>导出备份</span></button>
+<button class="sidebar-btn" onclick="document.getElementById('importFile').click()"><span>📥</span><span>导入备份</span></button>
+<input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+</div>
+</div>
+<div class="main-content">
+<div class="page active" id="page-daily-plan">
+<div class="page-header"><h1 class="page-title">每日计划</h1><p class="page-subtitle">规划你的一天，提升效率</p></div>
+<div class="stats-grid"><div class="stat-card"><div class="stat-value" id="totalTasks">0</div><div class="stat-label">总任务数</div></div><div class="stat-card"><div class="stat-value" id="completedTasks">0</div><div class="stat-label">已完成</div></div><div class="stat-card"><div class="stat-value" id="completionRate">0%</div><div class="stat-label">完成率</div></div></div>
+<div class="card"><h3 class="card-title">添加新任务</h3><div class="input-group"><input type="text" class="input-field" id="taskInput" placeholder="输入任务内容..." onkeypress="if(event.key==='Enter')addTask()"></div><button class="btn btn-primary" onclick="addTask()">添加任务</button></div>
+<div class="card"><h3 class="card-title">今日任务</h3><div id="taskList"></div></div>
+</div>
+<div class="page" id="page-diet-record">
+<div class="page-header"><h1 class="page-title">饮食记录</h1><p class="page-subtitle">记录每一餐，关注健康饮食</p></div>
+<div class="stats-grid"><div class="stat-card"><div class="stat-value" id="todayCalories">0</div><div class="stat-label">今日卡路里</div></div><div class="stat-card"><div class="stat-value" id="todayMeals">0</div><div class="stat-label">今日餐数</div></div></div>
+<div class="card"><h3 class="card-title">添加饮食记录</h3>
+<div class="input-group"><label class="input-label">餐食类型</label><select class="input-field" id="mealType"><option value="breakfast">早餐</option><option value="lunch">午餐</option><option value="dinner">晚餐</option><option value="snack">加餐</option></select></div>
+<div class="input-group"><label class="input-label">食物内容</label><input type="text" class="input-field" id="foodContent" placeholder="例如：燕麦粥、鸡蛋..."></div>
+<div class="input-group"><label class="input-label">预估卡路里</label><input type="number" class="input-field" id="foodCalories" placeholder="例如：350"></div>
+<button class="btn btn-primary" onclick="addMeal()">添加记录</button></div>
+<div class="card"><h3 class="card-title">今日饮食</h3><div id="mealList"></div></div>
+</div>
+<div class="page" id="page-system-analyst">
+<div class="page-header"><h1 class="page-title">系统分析师备考</h1><p class="page-subtitle">系统学习，稳步提升</p></div>
+<div class="stats-grid"><div class="stat-card"><div class="stat-value" id="studyDays">0</div><div class="stat-label">学习天数</div></div><div class="stat-card"><div class="stat-value" id="studyHours">0</div><div class="stat-label">累计学时</div></div><div class="stat-card"><div class="stat-value" id="completedTopics">0</div><div class="stat-label">完成知识点</div></div></div>
+<div class="card"><h3 class="card-title">添加学习记录</h3>
+<div class="input-group"><label class="input-label">知识点</label><input type="text" class="input-field" id="topicInput" placeholder="例如：软件工程基础"></div>
+<div class="input-group"><label class="input-label">学习时长(小时)</label><input type="number" class="input-field" id="studyDuration" placeholder="例如：2" step="0.5"></div>
+<div class="input-group"><label class="input-label">学习笔记</label><textarea class="input-field" id="studyNote" placeholder="记录学习要点和心得..."></textarea></div>
+<button class="btn btn-primary" onclick="addStudy()">添加记录</button></div>
+<div class="card"><h3 class="card-title">学习记录</h3><div id="studyList"></div></div>
+</div>
+<div class="page" id="page-ai-course">
+<div class="page-header"><h1 class="page-title">AI课程学习</h1><p class="page-subtitle">掌握AI技术，拥抱未来</p></div>
+<div class="stats-grid"><div class="stat-card"><div class="stat-value" id="aiCourses">0</div><div class="stat-label">学习课程</div></div><div class="stat-card"><div class="stat-value" id="aiProgress">0%</div><div class="stat-label">总体进度</div></div></div>
+<div class="card"><h3 class="card-title">添加课程</h3>
+<div class="input-group"><label class="input-label">课程名称</label><input type="text" class="input-field" id="courseName" placeholder="例如：机器学习基础"></div>
+<div class="input-group"><label class="input-label">学习进度(%)</label><input type="number" class="input-field" id="courseProgress" placeholder="0-100" min="0" max="100"></div>
+<div class="input-group"><label class="input-label">学习笔记</label><textarea class="input-field" id="courseNote" placeholder="记录课程要点..."></textarea></div>
+<button class="btn btn-primary" onclick="addCourse()">添加课程</button></div>
+<div class="card"><h3 class="card-title">课程列表</h3><div id="courseList"></div></div>
+</div>
+<div class="page" id="page-money-manager">
+<div class="page-header"><h1 class="page-title">记账存钱</h1><p class="page-subtitle">记录收支，实现财务目标</p></div>
+<div class="stats-grid"><div class="stat-card"><div class="stat-value" id="monthIncome">¥0</div><div class="stat-label">本月收入</div></div><div class="stat-card"><div class="stat-value" id="monthExpense">¥0</div><div class="stat-label">本月支出</div></div><div class="stat-card"><div class="stat-value" id="monthBalance">¥0</div><div class="stat-label">本月结余</div></div></div>
+<div class="card"><h3 class="card-title">添加记账</h3>
+<div class="input-group"><label class="input-label">类型</label><select class="input-field" id="moneyType"><option value="expense">支出</option><option value="income">收入</option></select></div>
+<div class="input-group"><label class="input-label">分类</label><select class="input-field" id="moneyCategory"><option value="food">餐饮</option><option value="transport">交通</option><option value="shopping">购物</option><option value="entertainment">娱乐</option><option value="salary">工资</option><option value="other">其他</option></select></div>
+<div class="input-group"><label class="input-label">金额</label><input type="number" class="input-field" id="moneyAmount" placeholder="输入金额"></div>
+<div class="input-group"><label class="input-label">备注</label><input type="text" class="input-field" id="moneyNote" placeholder="备注说明"></div>
+<button class="btn btn-primary" onclick="addMoneyRecord()">添加记录</button></div>
+<div class="card"><h3 class="card-title">收支记录</h3><div id="moneyList"></div></div>
+</div>
+<div class="page" id="page-theme-settings">
+<div class="page-header"><h1 class="page-title">配色调整</h1><p class="page-subtitle">自定义你的工作台配色</p></div>
+<div class="card"><h3 class="card-title">主题颜色</h3>
+<div class="color-picker-group"><div class="color-preview" id="purplePreview" style="background:#af52de"></div><div class="color-input"><label class="input-label">紫色主色</label><input type="color" class="input-field" id="purpleColor" value="#af52de" onchange="updateColor('purple')"></div></div>
+<div class="color-picker-group"><div class="color-preview" id="cyanPreview" style="background:#5ac8fa"></div><div class="color-input"><label class="input-label">青色辅色</label><input type="color" class="input-field" id="cyanColor" value="#5ac8fa" onchange="updateColor('cyan')"></div></div>
+<button class="btn btn-primary" onclick="applyTheme()" style="margin-top:16px">应用配色</button>
+<button class="btn btn-secondary" onclick="resetTheme()" style="margin-top:16px;margin-left:8px">恢复默认</button>
+</div>
+</div>
+</div>
+<div class="ai-float">
+<div class="ai-panel" id="aiPanel">
+<div class="ai-header">AI智能助手</div>
+<div class="ai-body">
+<input type="text" class="ai-input" id="aiInput" placeholder="输入你的问题..." onkeypress="if(event.key==='Enter')askAI()">
+<button class="btn btn-primary" onclick="askAI()" style="width:100%">发送</button>
+<div class="ai-response" id="aiResponse" style="display:none"></div>
+</div>
+</div>
+<button class="ai-btn" onclick="toggleAIPanel()">🤖</button>
+</div>
+<script>
+let data={tasks:[],meals:[],studies:[],courses:[],money:[],theme:{purple:'#af52de',cyan:'#5ac8fa'}};
+function init(){const s=localStorage.getItem('workbenchData');if(s){data=JSON.parse(s);if(data.theme)applyThemeColors()}renderAll()}
+function saveData(){localStorage.setItem('workbenchData',JSON.stringify(data))}
+function switchPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');document.querySelector('[data-page="'+id+'"]').classList.add('active');if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('show')}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('show')}
+function addTask(){const i=document.getElementById('taskInput');if(!i.value.trim())return;data.tasks.push({id:Date.now(),text:i.value.trim(),completed:false,date:new Date().toDateString()});i.value='';saveData();renderTasks()}
+function toggleTask(id){const t=data.tasks.find(t=>t.id===id);if(t){t.completed=!t.completed;saveData();renderTasks()}}
+function deleteTask(id){data.tasks=data.tasks.filter(t=>t.id!==id);saveData();renderTasks()}
+function renderTasks(){const td=data.tasks.filter(t=>t.date===new Date().toDateString());const c=td.filter(t=>t.completed).length;document.getElementById('totalTasks').textContent=td.length;document.getElementById('completedTasks').textContent=c;document.getElementById('completionRate').textContent=td.length?Math.round(c/td.length*100)+'%':'0%';document.getElementById('taskList').innerHTML=td.map(t=>'<div class="list-item"><div class="checkbox-wrapper" onclick="toggleTask('+t.id+')"><div class="checkbox '+(t.completed?'checked':'')+'">'+(t.completed?'✓':'')+'</div><div class="checkbox-text '+(t.completed?'completed':'')+'">'+t.text+'</div></div><button class="icon-btn" onclick="deleteTask('+t.id+')">🗑</button></div>').join('')||'<p style="color:var(--txt2);text-align:center;padding:20px">暂无任务</p>'}
+function addMeal(){const t=document.getElementById('mealType').value,c=document.getElementById('foodContent').value,cal=document.getElementById('foodCalories').value;if(!c||!cal)return;const tn={breakfast:'早餐',lunch:'午餐',dinner:'晚餐',snack:'加餐'};data.meals.push({id:Date.now(),type:t,content:c,calories:parseInt(cal),date:new Date().toDateString(),typeName:tn[t]});document.getElementById('foodContent').value='';document.getElementById('foodCalories').value='';saveData();renderMeals()}
+function deleteMeal(id){data.meals=data.meals.filter(m=>m.id!==id);saveData();renderMeals()}
+function renderMeals(){const td=data.meals.filter(m=>m.date===new Date().toDateString());document.getElementById('todayCalories').textContent=td.reduce((s,m)=>s+m.calories,0);document.getElementById('todayMeals').textContent=td.length;document.getElementById('mealList').innerHTML=td.map(m=>'<div class="list-item"><div class="list-item-content"><div class="list-item-title">'+m.content+'</div><div class="list-item-meta">'+m.typeName+' · '+m.calories+'卡路里</div></div><button class="icon-btn" onclick="deleteMeal('+m.id+')">🗑</button></div>').join('')||'<p style="color:var(--txt2);text-align:center;padding:20px">暂无记录</p>'}
+function addStudy(){const t=document.getElementById('topicInput').value,d=document.getElementById('studyDuration').value,n=document.getElementById('studyNote').value;if(!t||!d)return;data.studies.push({id:Date.now(),topic:t,duration:parseFloat(d),note:n,date:new Date().toDateString()});document.getElementById('topicInput').value='';document.getElementById('studyDuration').value='';document.getElementById('studyNote').value='';saveData();renderStudies()}
+function deleteStudy(id){data.studies=data.studies.filter(s=>s.id!==id);saveData();renderStudies()}
+function renderStudies(){const days=new Set(data.studies.map(s=>s.date)).size;const hours=data.studies.reduce((s,st)=>s+st.duration,0);document.getElementById('studyDays').textContent=days;document.getElementById('studyHours').textContent=hours.toFixed(1);document.getElementById('completedTopics').textContent=data.studies.length;document.getElementById('studyList').innerHTML=data.studies.slice(-10).reverse().map(s=>'<div class="list-item"><div class="list-item-content"><div class="list-item-title">'+s.topic+'</div><div class="list-item-meta">'+s.duration+'小时 · '+(s.note||'无笔记')+'</div></div><button class="icon-btn" onclick="deleteStudy('+s.id+')">🗑</button></div>').join('')||'<p style="color:var(--txt2);text-align:center;padding:20px">暂无记录</p>'}
+function addCourse(){const n=document.getElementById('courseName').value,p=document.getElementById('courseProgress').value,note=document.getElementById('courseNote').value;if(!n)return;data.courses.push({id:Date.now(),name:n,progress:parseInt(p||0),note:note});document.getElementById('courseName').value='';document.getElementById('courseProgress').value='';document.getElementById('courseNote').value='';saveData();renderCourses()}
+function deleteCourse(id){data.courses=data.courses.filter(c=>c.id!==id);saveData();renderCourses()}
+function updateCourseProgress(id){const c=data.courses.find(c=>c.id===id);if(c){const newP=prompt('更新进度(0-100):',c.progress);if(newP!==null){c.progress=Math.min(100,Math.max(0,parseInt(newP)||0));saveData();renderCourses()}}}
+function renderCourses(){document.getElementById('aiCourses').textContent=data.courses.length;const avg=data.courses.length?Math.round(data.courses.reduce((s,c)=>s+c.progress,0)/data.courses.length):0;document.getElementById('aiProgress').textContent=avg+'%';document.getElementById('courseList').innerHTML=data.courses.map(c=>'<div class="list-item"><div class="list-item-content"><div class="list-item-title">'+c.name+'</div><div class="progress-bar"><div class="progress-fill" style="width:'+c.progress+'%"></div></div><div class="list-item-meta">进度: '+c.progress+'% · '+(c.note||'无笔记')+'</div></div><button class="icon-btn" onclick="updateCourseProgress('+c.id+')">✏️</button><button class="icon-btn" onclick="deleteCourse('+c.id+')">🗑</button></div>').join('')||'<p style="color:var(--txt2);text-align:center;padding:20px">暂无课程</p>'}
+function addMoneyRecord(){const t=document.getElementById('moneyType').value,cat=document.getElementById('moneyCategory').value,amt=document.getElementById('moneyAmount').value,n=document.getElementById('moneyNote').value;if(!amt)return;const cn={food:'餐饮',transport:'交通',shopping:'购物',entertainment:'娱乐',salary:'工资',other:'其他'};data.money.push({id:Date.now(),type:t,category:cat,amount:parseFloat(amt),note:n,date:new Date().toISOString().slice(0,7),categoryName:cn[cat]});document.getElementById('moneyAmount').value='';document.getElementById('moneyNote').value='';saveData();renderMoney()}
+function deleteMoney(id){data.money=data.money.filter(m=>m.id!==id);saveData();renderMoney()}
+function renderMoney(){const cm=new Date().toISOString().slice(0,7);const md=data.money.filter(m=>m.date===cm);const inc=md.filter(m=>m.type==='income').reduce((s,m)=>s+m.amount,0);const exp=md.filter(m=>m.type==='expense').reduce((s,m)=>s+m.amount,0);document.getElementById('monthIncome').textContent='¥'+inc;document.getElementById('monthExpense').textContent='¥'+exp;document.getElementById('monthBalance').textContent='¥'+(inc-exp);document.getElementById('moneyList').innerHTML=md.slice(-10).reverse().map(m=>'<div class="list-item"><div class="list-item-content"><div class="list-item-title"><span class="amount '+(m.type==='income'?'income':'expense')+'">'+(m.type==='income'?'+':'-')+m.amount+'</span> '+m.categoryName+'</div><div class="list-item-meta">'+(m.note||'无备注')+'</div></div><button class="icon-btn" onclick="deleteMoney('+m.id+')">🗑</button></div>').join('')||'<p style="color:var(--txt2);text-align:center;padding:20px">暂无记录</p>'}
+function updateColor(type){const color=document.getElementById(type+'Color').value;document.getElementById(type+'Preview').style.background=color}
+function applyTheme(){data.theme.purple=document.getElementById('purpleColor').value;data.theme.cyan=document.getElementById('cyanColor').value;applyThemeColors();saveData()}
+function applyThemeColors(){document.documentElement.style.setProperty('--p',data.theme.purple);document.documentElement.style.setProperty('--c',data.theme.cyan)}
+function resetTheme(){data.theme={purple:'#af52de',cyan:'#5ac8fa'};document.getElementById('purpleColor').value='#af52de';document.getElementById('cyanColor').value='#5ac8fa';applyThemeColors();saveData()}
+function toggleAIPanel(){document.getElementById('aiPanel').classList.toggle('show')}
+function askAI(){const q=document.getElementById('aiInput').value;if(!q.trim())return;const r=document.getElementById('aiResponse');r.style.display='block';r.innerHTML='<p>收到问题：'+q+'</p><p style="margin-top:12px">这是一个模拟的AI回复。实际使用时可以接入真实的AI API来获得智能回答。</p>';document.getElementById('aiInput').value=''}
+function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='workbench-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(url)}
+function importData(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=function(ev){try{data=JSON.parse(ev.target.result);saveData();applyThemeColors();renderAll();alert('导入成功！')}catch(err){alert('导入失败：文件格式错误')}};reader.readAsText(file)}
+function renderAll(){renderTasks();renderMeals();renderStudies();renderCourses();renderMoney()}
+init();
+// 注册Service Worker
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('service-worker.js')
+    .then(reg=>console.log('Service Worker注册成功'))
+    .catch(err=>console.log('Service Worker注册失败:',err));
+}
+</script>
+</body>
+</html>
