@@ -97,6 +97,7 @@ textarea.input-field{resize:vertical;min-height:80px}
 <div class="sidebar-footer">
 <button class="sidebar-btn" onclick="exportData()"><span>📤</span><span>导出备份</span></button>
 <button class="sidebar-btn" onclick="document.getElementById('importFile').click()"><span>📥</span><span>导入备份</span></button>
+<button class="sidebar-btn" onclick="resetAllData()"><span>🔄</span><span>重置示例数据</span></button>
 <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
 </div>
 </div>
@@ -264,6 +265,7 @@ function toggleAIPanel(){document.getElementById('aiPanel').classList.toggle('sh
 function askAI(){const q=document.getElementById('aiInput').value;if(!q.trim())return;const r=document.getElementById('aiResponse');r.style.display='block';r.innerHTML='<p>收到问题：'+q+'</p><p style="margin-top:12px">这是一个模拟的AI回复。实际使用时可以接入真实的AI API来获得智能回答。</p>';document.getElementById('aiInput').value=''}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='workbench-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(url)}
 function importData(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=function(ev){try{data=JSON.parse(ev.target.result);saveData();applyThemeColors();renderAll();alert('导入成功！')}catch(err){alert('导入失败：文件格式错误')}};reader.readAsText(file)}
+function resetAllData(){if(confirm('确定要重置所有数据吗？这将清除所有记录并加载示例数据。')){localStorage.removeItem('workbenchData');location.reload()}}
 function renderAll(){renderTasks();renderMeals();renderStudies();renderCourses();renderMoney()}
 init();
 // 注册Service Worker
